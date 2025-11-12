@@ -25,7 +25,7 @@ class StorePodcastRequest extends FormRequest
             'titre'=>'required|max:8',
             'description'=>'required|string|min:10',
             'image'=>'required|file|mimes:jpg,png,jpeg',
-            'user_id'=>'required|exists:users,id'
+            'user_id'=>'exists:users,id'
         ];
     }
 }

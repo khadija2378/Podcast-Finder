@@ -23,6 +23,9 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+    public function podcast(){
+        return $this->hasMany(Podcast::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Épisode extends Model
 {
+     use HasFactory;
+
      protected $fillable = [
         'titre',
         'description',
         'audio',
         'podcast_id',
     ];
-    use HasFactory;
+
+    public function podcast(){
+        return $this->belongsTo(Podcast::class);
+    }
 }

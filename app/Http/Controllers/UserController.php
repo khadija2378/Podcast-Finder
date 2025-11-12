@@ -19,6 +19,7 @@ class UserController extends Controller
 
     public function register(RegisterRequest $request)
     {
+        
         $user=User::create($request->validated());
         return response()->json($user);
     }
@@ -40,6 +41,18 @@ class UserController extends Controller
             'user'=>$user,
             'token'=>$token
         ]);
+    }
+
+    public function resetPassword(LoginRequest $request){
+        $request->validated();
+        $user=User::where('email',$request->email)->first();
+        if(!$user){
+            return response()->json(['message' =>'email not found']);
+        }
+        $user->update([
+           'password'=> $request->password
+        ]);
+        return response()->json(['message' => 'Password successfully reset']);
     }
 
     public function logout(){
