@@ -12,7 +12,7 @@ class Podcast extends Model
     protected $fillable = [
         'titre',
         'description',
-        'image',
+        'audio',
         'user_id',
     ];
 
@@ -20,7 +20,7 @@ class Podcast extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function Episode(){
+    public function episodes(){
         return $this->hasMany(Épisode::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEpisodeRequest extends FormRequest
+class UpdateEpisodeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class StoreEpisodeRequest extends FormRequest
         return [
             'titre'=>'required|max:8',
             'description'=>'required|string|min:10',
-            'audio'=>'file|sometimes',
-            'podcast_id'=>'exists:podcasts,id',
+            'audio'=>'file',
         ];
     }
 }

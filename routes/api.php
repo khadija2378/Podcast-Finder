@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -31,4 +32,9 @@ Route::post('/podcasts',[PodcastController::class,'store'])->middleware('auth:sa
 Route::post('/podcasts/{podcast}', [PodcastController::class,'update'])->middleware('auth:sanctum');
 Route::delete('/podcasts/{podcast}',[PodcastController::class,'destroy'])->middleware('auth:sanctum');
 
-Route::resource('/episodes', PodcastController::class)->middleware('auth:sanctum');
+Route::get('/podcasts/{podcast}/episodes', [EpisodeController::class,'index'])->middleware('auth:sanctum');
+Route::get('/episodes/{episode}', [EpisodeController::class,'show'])->middleware('auth:sanctum');
+Route::post('/podcasts/{podcast_id}/episodes', [EpisodeController::class,'store'])->middleware('auth:sanctum');
+Route::put('/episodes/{id}', [EpisodeController::class,'update'])->middleware('auth:sanctum');
+Route::delete('/episodes/{id}', [EpisodeController::class,'destroy'])->middleware('auth:sanctum');
+

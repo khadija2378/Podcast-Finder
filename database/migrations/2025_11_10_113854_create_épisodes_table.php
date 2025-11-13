@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('titre');
             $table->text('description');
-            $table->string('audio');
+            $table->string('audio')->nullable();
             $table->unsignedBigInteger('podcast_id');
             $table->foreign('podcast_id')->references('id')->on('podcasts')->cascadeOnDelete();
             $table->timestamps();

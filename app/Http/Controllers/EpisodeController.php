@@ -3,58 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\StoreEpisodeRequest;
+use App\Http\Requests\UpdateEpisodeRequest;
+use App\Models\Podcast;
 use App\Models\Épisode;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class EpisodeController extends Controller
 {
-       /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function index(Podcast $podcast)
     {
-        //
+        $episodes=$podcast->episodes;
+
+        return response()->json($episodes);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreEpisodeRequest $request,Podcast $podcast_id)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(RegisterRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Épisode $Épisode)
-    {
-        //
+       $episode=$request->validated();
+       $podcast=$podcast_id->id;
+       $episode['podcast_id']=$podcast;
+       $data=Épisode::create($episode);
+       return response()->json(['message'=>'Épisode bien ajouté',
+                                'episode'=>$data]);
     }
 
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Épisode $Épisode)
+    public function show(Épisode $episode)
     {
-        //
+        return response()->json($episode);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Épisode $Épisode)
+
+    public function update(UpdateEpisodeRequest $request, Épisode $id)
     {
-        //
+        $data = $request->validated();
+        $id->update($data);
+        return response()->json(['message'=>'Episode modifié avec succès',
+                                 'Eposide'=> $id]);
+    }
+
+
+    public function destroy(Épisode $id)
+    {
+        $id->delete();
+        return response()->json(['message'=>'episode est supprimer']);
     }
 }
