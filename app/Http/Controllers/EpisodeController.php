@@ -2,87 +2,123 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\StoreEpisodeRequest;
 use App\Http\Requests\UpdateEpisodeRequest;
 use App\Models\Podcast;
 use App\Models\Épisode;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\HttpCache\Store;
+use Illuminate\Support\Facades\Auth;
 
 class EpisodeController extends Controller
 {
-
+    /**
+     * Afficher tous les épisodes d’un podcast.
+     */
     public function index(Podcast $podcast)
     {
-        $episodes=$podcast->episodes;
-
+        $episodes = $podcast->episodes;
         return response()->json($episodes);
     }
 
-    public function store(StoreEpisodeRequest $request,Podcast $podcast_id)
+    /**
+     * Créer un nouvel épisode.
+     */
+    public function store(StoreEpisodeRequest $request, Podcast $podcast)
     {
-       $episode=$request->validated();
-       $this->authorize('create',Épisode::class);
-        $uploadedFileUrl = Cloudinary::upload(
-        $request->file('audio')->getRealPath(),['resource_type' => 'video'])->getSecurePath();
+        // Policy
+        $this->authorize('create', Épisode::class);
 
-        $episode['audio'] = $uploadedFileUrl;
+        // Validate data
+        $episodeData = $request->validated();
 
+        // Upload audio to Cloudinary
+        $uploadedAudioUrl = Cloudinary::upload(
+            $request->file('audio')->getRealPath(),
+            ['resource_type' => 'video']
+        )->getSecurePath();
 
-       $podcast=$podcast_id->id;
-       $episode['podcast_id']=$podcast;
-       $data=Épisode::create($episode);
-       return response()->json(['message'=>'Épisode bien ajouté',
-                                'episode'=>$data]);
+        $episodeData['audio'] = $uploadedAudioUrl;
+        $episodeData['podcast_id'] = $podcast->id;
+
+        $episode = Épisode::create($episodeData);
+
+        return response()->json([
+            'message' => 'Épisode bien ajouté',
+            'episode' => $episode
+        ]);
     }
 
-
+    /**
+     * Afficher un épisode spécifique.
+     */
     public function show(Épisode $episode)
     {
-        if(!$episode){
-            return response()->json(['message'=>'episode est introuvable']);
+        if (!$episode) {
+            return response()->json(['message' => 'Épisode introuvable']);
         }
+
         return response()->json($episode);
     }
 
-
-    public function update(UpdateEpisodeRequest $request, Épisode $id)
+    /**
+     * Modifier un épisode.
+     */
+    public function update(UpdateEpisodeRequest $request, Épisode $episode)
     {
-        if(!$id){
-            return response()->json(['message'=>'episode est introuvable']);
+        // Policy
+        $this->authorize('update', $episode);
+
+        if (!$episode) {
+            return response()->json(['message' => 'Épisode introuvable']);
         }
+
         $data = $request->validated();
+
+        // Update audio if new file uploaded
         if ($request->hasFile('audio')) {
-        if ($id->audio) {
-            $publicId = pathinfo(parse_url($id->audio, PHP_URL_PATH), PATHINFO_FILENAME);
-             Cloudinary::destroy($publicId, ['resource_type' => 'video']);
+            if ($episode->audio) {
+                $publicId = pathinfo(parse_url($episode->audio, PHP_URL_PATH), PATHINFO_FILENAME);
+                Cloudinary::destroy($publicId, ['resource_type' => 'video']);
+            }
+
+            $uploadedAudioUrl = Cloudinary::upload(
+                $request->file('audio')->getRealPath(),
+                ['resource_type' => 'video']
+            )->getSecurePath();
+
+            $data['audio'] = $uploadedAudioUrl;
         }
-         $uploadedFileUrl = Cloudinary::upload($request->file('audio')->getRealPath(),
-            ['resource_type' => 'video']
-        )->getSecurePath();
-         $data['audio'] = $uploadedFileUrl;
-     }
-        $id->update($data);
-        return response()->json(['message'=>'Episode modifié avec succès',
-                                 'Eposide'=> $id]);
+
+        $episode->update($data);
+
+        return response()->json([
+            'message' => 'Épisode modifié avec succès',
+            'episode' => $episode
+        ]);
     }
 
-
-    public function destroy(Épisode $id)
+    /**
+     * Supprimer un épisode.
+     */
+    public function destroy(Épisode $episode)
     {
-        if(!$id){
-            return response()->json(['message'=>'episode est introuvable']);
+        // Policy
+        $this->authorize('delete', $episode);
+
+        if (!$episode) {
+            return response()->json(['message' => 'Épisode introuvable']);
         }
-        if ($id->audio) {
 
-        $parsedUrl = parse_url($id->audio, PHP_URL_PATH);
-        $publicId = pathinfo($parsedUrl, PATHINFO_FILENAME);
+        // Delete audio file
+        if ($episode->audio) {
+            $publicId = pathinfo(parse_url($episode->audio, PHP_URL_PATH), PATHINFO_FILENAME);
+            Cloudinary::destroy($publicId, ['resource_type' => 'video']);
+        }
 
-        Cloudinary::destroy($publicId, ['resource_type' => 'video']);
-    }
-        $id->delete();
-        return response()->json(['message'=>'episode est supprimer']);
+        $episode->delete();
+
+        return response()->json([
+            'message' => 'Épisode supprimé avec succès'
+        ]);
     }
 }

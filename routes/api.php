@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::post('/register',[UserController::class,'register']);
 Route::post('/login',[UserController::class,'login']);
@@ -33,23 +33,30 @@ Route::post('/logout',[UserController::class,'logout']);
 //Podcasts
 Route::get('/podcasts',[PodcastController::class,'index']);
 Route::get('/podcasts/{podcast}',[PodcastController::class,'show']);
-Route::post('/podcasts',[PodcastController::class,'store']);
-Route::put('/podcasts/{podcast}', [PodcastController::class,'update']);
-Route::delete('/podcasts/{podcast}',[PodcastController::class,'destroy']);
+Route::post('/podcasts',[PodcastController::class,'store'])->middleware('role:animateur,admin');
+Route::put('/podcasts/{podcast}', [PodcastController::class,'update'])->middleware('role:animateur,admin');
+Route::delete('/podcasts/{podcast}',[PodcastController::class,'destroy'])->middleware('role:animateur,admin');
 
 //Episodes
 Route::get('/podcasts/{podcast}/episodes', [EpisodeController::class,'index']);
 Route::get('/episodes/{episode}', [EpisodeController::class,'show']);
-Route::post('/podcasts/{podcast_id}/episodes', [EpisodeController::class,'store']);
-Route::put('/episodes/{id}', [EpisodeController::class,'update']);
-Route::delete('/episodes/{id}', [EpisodeController::class,'destroy']);
+Route::post('/podcasts/{podcast}/episodes', [EpisodeController::class,'store'])->middleware('role:animateur,admin');
+Route::put('/episodes/{episode}', [EpisodeController::class,'update'])->middleware('role:animateur,admin');
+Route::delete('/episodes/{episode}', [EpisodeController::class,'destroy'])->middleware('role:animateur,admin');
 
 //Animateur
-Route::post('/hosts',[UserController::class,'register']);
-Route::put('/hosts/{id}',[UserController::class,'update']);
-Route::delete('/hosts/{id}',[UserController::class,'destory']);
-Route::get('/hosts',[UserController::class,'index']);
-Route::get('/hosts/{id}',[UserController::class,'show']);
+Route::get('/hosts',[UserController::class,'hosts']);
+Route::get('/hosts/{host}',[UserController::class,'show']);
+
+
+});
+//Admin
+Route::middleware('auth:sanctum','role:admin')->group(function(){
+
+Route::get('/users',[UserController::class,'index']);
+Route::post('/users',[UserController::class,'register']);
+Route::put('/users/{user}',[UserController::class,'update']);
+Route::delete('/users/{user}',[UserController::class,'destroy']);
 
 });
 

@@ -4,10 +4,13 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+
 use App\Models\Podcast;
+use App\Models\User;
 use App\Models\Épisode;
 use App\Policies\EpisodePolicy;
 use App\Policies\PodcastPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -20,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
          Podcast::class => PodcastPolicy::class,
          Épisode::class => EpisodePolicy::class,
+         User::class => UserPolicy::class,
     ];
 
     /**
