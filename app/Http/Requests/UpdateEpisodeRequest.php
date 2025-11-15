@@ -22,9 +22,9 @@ class UpdateEpisodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titre'=>'required|max:8',
-            'description'=>'required|string|min:10',
-            'audio'=>'file',
+            'titre'=>'sometimes|max:8',
+            'description'=>'sometimes|string|min:10',
+            'audio'=>'sometimes|file|mimes:mp3,wav,ogg',
         ];
     }
 }

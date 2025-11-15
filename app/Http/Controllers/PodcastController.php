@@ -19,11 +19,13 @@ class PodcastController extends Controller
 
     public function store(StorePodcastRequest $request)
     {
-        $user=Auth::user()->id;
+        $user=Auth::user();
+        $this->authorize('create',Podcast::class);
         $podcast=$request->validated();
-         $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+         $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath(),
+            ['resource_type' => 'image'])->getSecurePath();
          $podcast['image']=$uploadedFileUrl;
-        $podcast['user_id']=$user;
+        $podcast['user_id']=$user->id;
         $datapodcast=Podcast::create($podcast);
         return response()->json($datapodcast);
 
@@ -31,11 +33,18 @@ class PodcastController extends Controller
 
     public function show(Podcast $podcast)
     {
+        if(!$podcast){
+            return response()->json(['message'=>'podcast est introuvable']);
+        }
         return response()->json($podcast);
     }
 
     public function update(UpdatePodcastRequest $request, Podcast $podcast)
     {
+        $this->authorize('update',$podcast);
+        if(!$podcast){
+            return response()->json(['message'=>'podcast est introuvable']);
+        }
      $data = $request->validated();
 
      if ($request->hasFile('image')) {
@@ -43,28 +52,41 @@ class PodcastController extends Controller
             $publicId = pathinfo(parse_url($podcast->image, PHP_URL_PATH), PATHINFO_FILENAME);
              Cloudinary::destroy($publicId);
         }
-         $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+         $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath(),
+            ['resource_type' => 'image'])->getSecurePath();
          $data['image'] = $uploadedFileUrl;
      }
 
     $podcast->update($data);
 
         return response()->json([
-        'message' => 'Podcast modifié avec succès',
+        'message' => 'Podcast est modifié avec succès',
         'podcast' => $podcast
     ]);
     }
 
     public function destroy(Podcast $podcast)
-    {
-       if ($podcast->image) {
+{
+     $this->authorize('delete',$podcast);
+     
+    if(!$podcast){
+            return response()->json(['message'=>'podcast est introuvable']);
+        }
+    if ($podcast->image) {
+
 
         $parsedUrl = parse_url($podcast->image, PHP_URL_PATH);
-       $publicId = pathinfo($parsedUrl, PATHINFO_FILENAME);
+        $publicId = pathinfo($parsedUrl, PATHINFO_FILENAME);
 
-        Cloudinary::destroy($publicId);
-     }
-        $podcast->delete();
-        return response()->json(["message"=>"podcast est supprimer"]);
+
+        Cloudinary::destroy($publicId, ['resource_type' => 'image']);
     }
+
+
+    $podcast->delete();
+
+    return response()->json([
+        "message" => "Podcast est supprimé avec succès"
+    ]);
+}
 }

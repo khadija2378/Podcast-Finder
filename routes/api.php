@@ -24,17 +24,36 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register',[UserController::class,'register']);
 Route::post('/login',[UserController::class,'login']);
 Route::post('/reset',[UserController::class,'resetPassword']);
-Route::post('/logout',[UserController::class,'logout'])->middleware('auth:sanctum');
 
-Route::get('/podcasts',[PodcastController::class,'index'])->middleware('auth:sanctum');
-Route::get('/podcasts/{podcast}',[PodcastController::class,'show'])->middleware('auth:sanctum');
-Route::post('/podcasts',[PodcastController::class,'store'])->middleware('auth:sanctum');
-Route::post('/podcasts/{podcast}', [PodcastController::class,'update'])->middleware('auth:sanctum');
-Route::delete('/podcasts/{podcast}',[PodcastController::class,'destroy'])->middleware('auth:sanctum');
 
-Route::get('/podcasts/{podcast}/episodes', [EpisodeController::class,'index'])->middleware('auth:sanctum');
-Route::get('/episodes/{episode}', [EpisodeController::class,'show'])->middleware('auth:sanctum');
-Route::post('/podcasts/{podcast_id}/episodes', [EpisodeController::class,'store'])->middleware('auth:sanctum');
-Route::put('/episodes/{id}', [EpisodeController::class,'update'])->middleware('auth:sanctum');
-Route::delete('/episodes/{id}', [EpisodeController::class,'destroy'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function(){
+
+Route::post('/logout',[UserController::class,'logout']);
+
+//Podcasts
+Route::get('/podcasts',[PodcastController::class,'index']);
+Route::get('/podcasts/{podcast}',[PodcastController::class,'show']);
+Route::post('/podcasts',[PodcastController::class,'store']);
+Route::put('/podcasts/{podcast}', [PodcastController::class,'update']);
+Route::delete('/podcasts/{podcast}',[PodcastController::class,'destroy']);
+
+//Episodes
+Route::get('/podcasts/{podcast}/episodes', [EpisodeController::class,'index']);
+Route::get('/episodes/{episode}', [EpisodeController::class,'show']);
+Route::post('/podcasts/{podcast_id}/episodes', [EpisodeController::class,'store']);
+Route::put('/episodes/{id}', [EpisodeController::class,'update']);
+Route::delete('/episodes/{id}', [EpisodeController::class,'destroy']);
+
+//Animateur
+Route::post('/hosts',[UserController::class,'register']);
+Route::put('/hosts/{id}',[UserController::class,'update']);
+Route::delete('/hosts/{id}',[UserController::class,'destory']);
+Route::get('/hosts',[UserController::class,'index']);
+Route::get('/hosts/{id}',[UserController::class,'show']);
+
+});
+
+
+
+
 

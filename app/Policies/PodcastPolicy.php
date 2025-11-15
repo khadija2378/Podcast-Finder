@@ -13,7 +13,7 @@ class PodcastPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+         return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class PodcastPolicy
      */
     public function view(User $user, Podcast $podcast): bool
     {
-        //
+         return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class PodcastPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->role === 'admin' || $user->role === 'animateur';
     }
 
     /**
@@ -37,7 +37,7 @@ class PodcastPolicy
      */
     public function update(User $user, Podcast $podcast): bool
     {
-        //
+        return $user->id === $podcast->user_id;
     }
 
     /**
@@ -45,7 +45,10 @@ class PodcastPolicy
      */
     public function delete(User $user, Podcast $podcast): bool
     {
-        //
+        if($user->role === 'admin'){
+            return true;
+        }
+        return $user->id === $podcast->user_id;
     }
 
     /**
@@ -53,7 +56,7 @@ class PodcastPolicy
      */
     public function restore(User $user, Podcast $podcast): bool
     {
-        //
+         return true;
     }
 
     /**
@@ -61,6 +64,6 @@ class PodcastPolicy
      */
     public function forceDelete(User $user, Podcast $podcast): bool
     {
-        //
+         return true;
     }
 }

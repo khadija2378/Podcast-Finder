@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UpdateRegister;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,14 +13,21 @@ class UserController extends Controller
 {
      public function index()
     {
-        $user=User::all();
+        $user=User::where('role','animateur')->get();
+
         return response()->json($user);
     }
+     public function show(User $id){
+        if($id->role !== 'animateur'){
+            return response()->json(['message'=>'pas animateur']);
+        }
+      return response()->json($id);
+     }
 
 
     public function register(RegisterRequest $request)
     {
-        
+
         $user=User::create($request->validated());
         return response()->json($user);
     }
@@ -59,5 +67,22 @@ class UserController extends Controller
         Auth::user()->currentAccessToken()->delete();
         return response()->json(['message'=>'Logout successful']);
 
+    }
+
+    public function update(UpdateRegister $request, User $id){
+       $data= $request->validated();
+       if($id->role!=='animateur'){
+        return response()->json(['message'=>'pas animateur']);
+       }
+       $id->update($data);
+       return response()->json($id);
+
+    }
+    public function destory(User $id){
+        if($id->role!=='animateur'){
+        return response()->json(['message'=>'pas animateur']);
+       }
+       $id->delete();
+       return response()->json(['message'=>'animateur est supprimer']);
     }
 }
