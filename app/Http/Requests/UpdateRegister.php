@@ -25,7 +25,8 @@ class UpdateRegister extends FormRequest
 
             'name'=>'sometimes|min:3',
             'email'=>'sometimes|email|unique:users,email',
-            'password'=>'sometimes|min:4|confirmed',
+            'role'=>'sometimes|in:admin,user,animateur',
+            'password'=>'sometimes|min:4',
 
 
         ];

@@ -11,16 +11,45 @@ use Illuminate\Support\Facades\Auth;
 class PodcastController extends Controller
 {
     /**
-     * Afficher la liste des podcasts.
-     */
+ * @OA\Get(
+ *     path="/api/podcasts",
+ *     summary="Get all podcasts",
+ *     tags={"Podcasts"},
+ *
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success"
+ *     )
+ * )
+ */
     public function index()
     {
         $podcasts = Podcast::all();
         return response()->json($podcasts);
     }
 
-    /**
-     * Créer un nouveau podcast.
+     /**
+     * @OA\Post(
+     *     path="/api/podcasts",
+     *     summary="Create a new podcast",
+     *     tags={"Podcasts"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"title","description","image"},
+     *                 @OA\Property(property="title", type="string", example="My Podcast"),
+     *                 @OA\Property(property="description", type="string", example="Podcast description"),
+     *                 @OA\Property(property="image", type="file")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Podcast created successfully"
+     *     )
+     * )
      */
     public function store(StorePodcastRequest $request)
     {
@@ -47,7 +76,26 @@ class PodcastController extends Controller
     }
 
     /**
-     * Afficher un podcast spécifique.
+     * @OA\Get(
+     *     path="/api/podcasts/{id}",
+     *     summary="Get a specific podcast",
+     *     tags={"Podcasts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Podcast ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Podcast not found"
+     *     )
+     * )
      */
     public function show(Podcast $podcast)
     {
@@ -59,7 +107,37 @@ class PodcastController extends Controller
     }
 
     /**
-     * Modifier un podcast.
+     * @OA\Put(
+     *     path="/api/podcasts/{id}",
+     *     summary="Update a podcast",
+     *     tags={"Podcasts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Podcast ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="title", type="string", example="Updated Title"),
+     *                 @OA\Property(property="description", type="string", example="Updated description"),
+     *                 @OA\Property(property="image", type="file")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Podcast updated successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Podcast not found"
+     *     )
+     * )
      */
     public function update(UpdatePodcastRequest $request, Podcast $podcast)
     {
@@ -96,8 +174,27 @@ class PodcastController extends Controller
         ]);
     }
 
-    /**
-     * Supprimer un podcast.
+   /**
+     * @OA\Delete(
+     *     path="/api/podcasts/{id}",
+     *     summary="Delete a podcast",
+     *     tags={"Podcasts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Podcast ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Podcast deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Podcast not found"
+     *     )
+     * )
      */
     public function destroy(Podcast $podcast)
     {
@@ -121,5 +218,15 @@ class PodcastController extends Controller
         return response()->json([
             'message' => 'Podcast supprimé avec succès'
         ]);
+    }
+
+    public function Search($titre){
+
+        $podcasts=Podcast::where('titre', 'like', "%{$titre}%")->get();
+
+        if($podcasts->isEmpty()){
+            return response()->json(['message' => 'Aucun podcast trouvé']);
+        }
+        return response()->json($podcasts);
     }
 }

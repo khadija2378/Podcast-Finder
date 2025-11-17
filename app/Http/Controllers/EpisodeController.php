@@ -12,7 +12,26 @@ use Illuminate\Support\Facades\Auth;
 class EpisodeController extends Controller
 {
     /**
-     * Afficher tous les épisodes d’un podcast.
+     * @OA\Get(
+     *     path="/api/podcasts/{podcast_id}/episodes",
+     *     summary="Get all episodes of a podcast",
+     *     tags={"Episodes"},
+     *     @OA\Parameter(
+     *         name="podcast_id",
+     *         in="path",
+     *         description="Podcast ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of episodes"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Podcast not found"
+     *     )
+     * )
      */
     public function index(Podcast $podcast)
     {
@@ -21,7 +40,34 @@ class EpisodeController extends Controller
     }
 
     /**
-     * Créer un nouvel épisode.
+     * @OA\Post(
+     *     path="/api/podcasts/{podcast_id}/episodes",
+     *     summary="Create a new episode",
+     *     tags={"Episodes"},
+     *     @OA\Parameter(
+     *         name="podcast_id",
+     *         in="path",
+     *         description="Podcast ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"title","audio"},
+     *                 @OA\Property(property="title", type="string", example="Episode 1"),
+     *                 @OA\Property(property="description", type="string", example="Episode description"),
+     *                 @OA\Property(property="audio", type="file")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Episode created successfully"
+     *     )
+     * )
      */
     public function store(StoreEpisodeRequest $request, Podcast $podcast)
     {
@@ -49,7 +95,26 @@ class EpisodeController extends Controller
     }
 
     /**
-     * Afficher un épisode spécifique.
+     * @OA\Get(
+     *     path="/api/episodes/{id}",
+     *     summary="Get a specific episode",
+     *     tags={"Episodes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Episode ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Episode details"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Episode not found"
+     *     )
+     * )
      */
     public function show(Épisode $episode)
     {
@@ -61,7 +126,37 @@ class EpisodeController extends Controller
     }
 
     /**
-     * Modifier un épisode.
+     * @OA\Put(
+     *     path="/api/episodes/{id}",
+     *     summary="Update an episode",
+     *     tags={"Episodes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Episode ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="title", type="string", example="Updated Episode"),
+     *                 @OA\Property(property="description", type="string", example="Updated description"),
+     *                 @OA\Property(property="audio", type="file")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Episode updated successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Episode not found"
+     *     )
+     * )
      */
     public function update(UpdateEpisodeRequest $request, Épisode $episode)
     {
@@ -98,7 +193,26 @@ class EpisodeController extends Controller
     }
 
     /**
-     * Supprimer un épisode.
+     * @OA\Delete(
+     *     path="/api/episodes/{id}",
+     *     summary="Delete an episode",
+     *     tags={"Episodes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Episode ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Episode deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Episode not found"
+     *     )
+     * )
      */
     public function destroy(Épisode $episode)
     {
@@ -120,5 +234,15 @@ class EpisodeController extends Controller
         return response()->json([
             'message' => 'Épisode supprimé avec succès'
         ]);
+    }
+
+    public function Search($titre){
+
+        $episode=Épisode::where('titre', 'like', "%{$titre}%")->get();
+
+        if($episode->isEmpty()){
+            return response()->json(['message' => 'Aucun podcast trouvé']);
+        }
+        return response()->json($episode);
     }
 }

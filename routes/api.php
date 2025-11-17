@@ -48,6 +48,10 @@ Route::delete('/episodes/{episode}', [EpisodeController::class,'destroy'])->midd
 Route::get('/hosts',[UserController::class,'hosts']);
 Route::get('/hosts/{host}',[UserController::class,'show']);
 
+//Search
+Route::get('/search/podcast/{titre}',[PodcastController::class,'search']);
+Route::get('/search/episode/{titre}', [EpisodeController::class,'search']);
+
 
 });
 //Admin
