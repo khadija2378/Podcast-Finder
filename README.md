@@ -1,66 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎧 Podcast Platform API (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📌 Description du projet
 
-## About Laravel
+Ce projet consiste à développer une **API RESTful avec Laravel** pour une plateforme de découverte, d’écoute et de gestion de podcasts.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+L’API permet :
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* Aux **utilisateurs** de découvrir, rechercher et consulter des podcasts et épisodes.
+* Aux **animateurs** de créer et gérer leurs podcasts et épisodes.
+* Aux **administrateurs** de gérer l’ensemble de la plateforme (utilisateurs, animateurs, podcasts et épisodes).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Le projet est sécurisé par une authentification basée sur **Laravel Sanctum** avec une gestion des rôles (**user, animateur, admin**).
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Technologies utilisées
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* **Laravel 10** (API Backend)
+* **Laravel Sanctum** (Authentification & tokens)
+* **MySQL** (Base de données)
+* **Swagger / OpenAPI** (Documentation API)
+* **PHPUnit** (Tests automatisés)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 👥 Rôles et permissions
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Utilisateur
 
-### Premium Partners
+* Création de compte et authentification
+* Consultation de la liste des podcasts
+* Recherche de podcasts et d’épisodes
+* Consultation des détails des podcasts et épisodes
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Animateur
 
-## Contributing
+* Création et gestion de ses propres podcasts
+* Ajout, modification et suppression de ses épisodes
+* Consultation de ses podcasts et épisodes publiés
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Administrateur
 
-## Code of Conduct
+* Gestion complète des podcasts, épisodes et animateurs
+* Gestion des utilisateurs (création, suppression, modification des rôles)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🔐 Authentification
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+* Authentification via **Laravel Sanctum**
+* Accès sécurisé selon le rôle de l’utilisateur
+* Utilisation de **Form Requests** pour la validation des données
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📚 Endpoints API
+
+### 🔑 Authentification
+
+| Méthode | Endpoint      | Description                             |
+| ------- | ------------- | --------------------------------------- |
+| POST    | /api/register | Créer un compte utilisateur             |
+| POST    | /api/login    | Authentification et génération du token |
+| POST    | /api/logout   | Déconnexion                             |
+
+---
+
+### 🎙️ Podcasts
+
+**Admin & Animateur**
+
+| Méthode | Endpoint           | Description          |
+| ------- | ------------------ | -------------------- |
+| POST    | /api/podcasts      | Créer un podcast     |
+| PUT     | /api/podcasts/{id} | Modifier un podcast  |
+| DELETE  | /api/podcasts/{id} | Supprimer un podcast |
+
+**Tous les utilisateurs**
+
+| Méthode | Endpoint           | Description          |
+| ------- | ------------------ | -------------------- |
+| GET     | /api/podcasts      | Lister les podcasts  |
+| GET     | /api/podcasts/{id} | Détails d’un podcast |
+
+---
+
+### 🎧 Épisodes
+
+**Admin & Animateur**
+
+| Méthode | Endpoint                            | Description          |
+| ------- | ----------------------------------- | -------------------- |
+| POST    | /api/podcasts/{podcast_id}/episodes | Créer un épisode     |
+| PUT     | /api/episodes/{id}                  | Modifier un épisode  |
+| DELETE  | /api/episodes/{id}                  | Supprimer un épisode |
+
+**Tous les utilisateurs**
+
+| Méthode | Endpoint                            | Description          |
+| ------- | ----------------------------------- | -------------------- |
+| GET     | /api/podcasts/{podcast_id}/episodes | Lister les épisodes  |
+| GET     | /api/episodes/{id}                  | Détails d’un épisode |
+
+---
+
+### 👤 Animateurs
+
+| Méthode | Endpoint        | Description            |
+| ------- | --------------- | ---------------------- |
+| GET     | /api/hosts      | Liste des animateurs   |
+| GET     | /api/hosts/{id} | Détails d’un animateur |
+
+---
+
+### 🔎 Recherche
+
+| Méthode | Endpoint             | Description                                 |
+| ------- | -------------------- | ------------------------------------------- |
+| GET     | /api/search/podcasts | Recherche par titre, catégorie ou animateur |
+| GET     | /api/search/episodes | Recherche par titre, podcast ou date        |
+
+---
+
+### 👨‍💼 Gestion des utilisateurs (Admin)
+
+| Méthode | Endpoint        | Description              |
+| ------- | --------------- | ------------------------ |
+| GET     | /api/users      | Liste des utilisateurs   |
+| POST    | /api/users      | Créer un utilisateur     |
+| PUT     | /api/users/{id} | Modifier un utilisateur  |
+| DELETE  | /api/users/{id} | Supprimer un utilisateur |
+
+---
+
+## 📄 Documentation API
+
+La documentation est générée avec **Swagger** et permet de :
+
+* Visualiser tous les endpoints
+* Tester les requêtes directement depuis l’interface
+
+📍 Accès : `/api/documentation`
+
+---
+
+## 🧪 Tests
+
+* Tests unitaires et fonctionnels avec **PHPUnit**
+* Vérification de l’authentification, des rôles et des endpoints critiques
+
+---
+
+## 🚀 Installation du projet
+
+1. Cloner le projet
+2. Installer les dépendances : `composer install`
+3. Configurer le fichier `.env`
+4. Lancer les migrations : `php artisan migrate`
+5. Lancer le serveur : `php artisan serve`
+
+---
+
+## 👩‍💻 Auteur
+
+**Khadija Araja**
+Développeuse Web – Backend Laravel
+
+---
+
+## 📌 Statut du projet
+
+✅ API fonctionnelle
+🔄 Améliorations possibles : notifications, favoris, statistiques d’écoute
